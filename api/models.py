@@ -63,6 +63,8 @@ class Building(models.Model):
     property_name = models.CharField(max_length=200)
     address = models.CharField(max_length=300)
     type = models.CharField(max_length=12, choices=PURPOSE, default="residential")
+    description = models.TextField()
+
 
     # Add ons
     features = models.ManyToManyField(Feature)
@@ -72,4 +74,17 @@ class Building(models.Model):
     latitude = models.DecimalField(max_digits=16)
     longitude = models.DecimalField(max_digits=16)
 
+    # Timestamp
+    built_at = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
+
+    def __str__(self):
+        return f"{self.type}: {self.property_name}"
+    
+
+
+#  -------- UNDEVELOPED PROPERTIES --------
+
+#  -------- MULTI UNIT PROPERTIES --------
