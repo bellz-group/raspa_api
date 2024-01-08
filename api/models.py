@@ -92,7 +92,7 @@ class Land(models.Model):
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    size = models.DecimalField(("size"), decimal_places=3, 
+    size = models.DecimalField(("size"), max_digits=18, decimal_places=3, 
                                help_text=(
             "Size of the land plot in meters square"
         ),)
