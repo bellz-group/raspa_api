@@ -102,14 +102,9 @@ class Land(models.Model):
     longitude = models.DecimalField(max_digits=16)
 
     # Shape(GIS) : Poly shape of the land plot
-    
-
-
-    
-
-    
+        
 
     def __str__(self):
-        return 
+        return f"{self.size} land"
 
 #  -------- MULTI UNIT PROPERTIES --------
