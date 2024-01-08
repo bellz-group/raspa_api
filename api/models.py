@@ -86,5 +86,30 @@ class Building(models.Model):
 
 
 #  -------- UNDEVELOPED PROPERTIES --------
+class Land(models.Model):
+    """
+    A representation of a undeveloped land plots
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    size = models.DecimalField(("size"), decimal_places=3, 
+                               help_text=(
+            "Size of the land plot in meters square"
+        ),)
+    
+    # Coordinates : The exact location of the land plot
+    latitude = models.DecimalField(max_digits=16)
+    longitude = models.DecimalField(max_digits=16)
+
+    # Shape(GIS) : Poly shape of the land plot
+    
+
+
+    
+
+    
+
+    def __str__(self):
+        return 
 
 #  -------- MULTI UNIT PROPERTIES --------
