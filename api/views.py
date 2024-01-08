@@ -4,10 +4,10 @@ from rest_framework.response import Response
 
 
 class Index(APIView):
-    
-    def get(self):
+    def get(self, request, format=None):
         return Response(
             {
                 "message": "This is the index route of the RASPA API",
                 "developer": "Olaniyi George"
             })
+
