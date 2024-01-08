@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 class Index(APIView):
 
-    def get(self):
+    def get(self, request, format=None):
         return Response(
             {
                 "message": "Welcome to the accounts app for auth on RASPA",
