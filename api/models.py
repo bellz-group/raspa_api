@@ -71,8 +71,8 @@ class Building(models.Model):
     amenities = models.ManyToManyField(Amenity)
 
     # Coordinates
-    latitude = models.DecimalField(max_digits=16)
-    longitude = models.DecimalField(max_digits=16)
+    latitude = models.DecimalField(max_digits=18, decimal_places=15)
+    longitude = models.DecimalField(max_digits=18, decimal_places=15)
 
     # Timestamp
     built_at = models.DateField()
@@ -98,8 +98,8 @@ class Land(models.Model):
         ),)
     
     # Coordinates : The exact location of the land plot
-    latitude = models.DecimalField(max_digits=16)
-    longitude = models.DecimalField(max_digits=16)
+    latitude = models.DecimalField(max_digits=18, decimal_places=15)
+    longitude = models.DecimalField(max_digits=18, decimal_places=15)
 
     # Shape(GIS) : Poly shape of the land plot
         
