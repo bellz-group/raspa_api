@@ -1,6 +1,6 @@
 from django.db import models
 import uuid
-# Create your models here.
+from account.models import BaseUserProfile
 
 
 #  -------- SINGLE UNIT PROPERTIES --------
@@ -59,11 +59,14 @@ class Building(models.Model):
     ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
+    listed_by = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True)
+
     # Building(property) Info
     property_name = models.CharField(max_length=200)
     address = models.CharField(max_length=300)
     type = models.CharField(max_length=12, choices=PURPOSE, default="residential")
     description = models.TextField()
+    owner = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True)
 
 
     # Add ons
@@ -102,9 +105,13 @@ class Land(models.Model):
     longitude = models.DecimalField(max_digits=18, decimal_places=15)
 
     # Shape(GIS) : Poly shape of the land plot
-        
+    
+    # Ownerships
+    listed_by = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True)
+    owner = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True)
+    
 
     def __str__(self):
-        return f"{self.size} land"
+        return f"{self.owner}'s {self.size} land"
 
 #  -------- MULTI UNIT PROPERTIES --------

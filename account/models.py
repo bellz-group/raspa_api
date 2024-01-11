@@ -15,11 +15,7 @@ class BaseUser(AbstractUser):
     last_name = models.CharField(max_length=150, blank=True)
 
 
-     # Add related_name to avoid clashes
-    # groups = models.ManyToManyField(Group, related_name='baseuser_groups')
-    # user_permissions = models.ManyToManyField(Permission, related_name='baseuser_perms')
-
-
+    
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
@@ -31,5 +27,8 @@ class BaseUserProfile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     user = models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name="user_profile")
+    
+    display_name = models.CharField(max_length=100, null=True, blank=True)
 
-
+    def __str__(self):
+        return f"P: {self.user}"
