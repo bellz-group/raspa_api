@@ -59,14 +59,14 @@ class Building(models.Model):
     ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    listed_by = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True)
+    listed_by = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name="buildings_i_listed")
 
     # Building(property) Info
     property_name = models.CharField(max_length=200)
     address = models.CharField(max_length=300)
     type = models.CharField(max_length=12, choices=PURPOSE, default="residential")
     description = models.TextField()
-    owner = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True)
+    owner = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name="my_building")
 
 
     # Add ons
@@ -108,8 +108,8 @@ class Land(models.Model):
     #border = models.MultiPolygonField()
     
     # Ownerships
-    listed_by = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True)
-    owner = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True)
+    listed_by = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name="land_listed_by_me")
+    owner = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name="my_land_plots")
     
 
     def __str__(self):

@@ -14,7 +14,7 @@ class BuildingAdmin(admin.ModelAdmin):
 
 @admin.register(Land)
 class LandAdmin(admin.ModelAdmin):
-    list_display = ("id", "size", "latitude", "longitude")
-    list_filter = ( "size", "owner", "listed_by")
-    search_fields = ( "size", "owner", "listed_by")
+    list_display = ("id", "area", "latitude", "longitude")
+    list_filter = ( "area", "owner", "listed_by")
+    search_fields = ( "area", "owner", "listed_by")
 

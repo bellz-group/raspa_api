@@ -6,14 +6,14 @@ from .models import *
 
 
 @admin.register(BaseUser)
-class LandAdmin(admin.ModelAdmin):
+class BaseUserAdmin(admin.ModelAdmin):
     list_display = ("id", "email", "first_name", "last_name")
     list_filter = ( "is_active", "is_staff")
     search_fields = ( "email", "first_name", "last_name")
 
 
 @admin.register(BaseUserProfile)
-class LandAdmin(admin.ModelAdmin):
-    list_display = ("id", "size", "latitude", "longitude")
-    list_filter = ( "size", "owner", "listed_by")
-    search_fields = ( "size", "owner", "listed_by")
+class BaseUserProfileAdmin(admin.ModelAdmin):
+    list_display = ("id", "user", "display_name")
+    list_filter = ()
+    search_fields = ("user", "display_name")
