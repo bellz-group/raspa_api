@@ -8,7 +8,7 @@ from .models import *
 @admin.register(Building)
 class BuildingAdmin(admin.ModelAdmin):
     list_display = ("id", "property_name", "type", "built_at")
-    list_filter = ( "listed_by", "owner")
+    list_filter = ( "listed_by", "type", "owner")
     search_fields = ( "property_name", "address", "description")
 
 
@@ -22,7 +22,7 @@ class LandAdmin(admin.ModelAdmin):
 @admin.register(Amenity)
 class AmenityAdmin(admin.ModelAdmin):
     list_display = ("id", "name",)
-    list_filter = ("name",)
+    #list_filter = ("name",)
     search_fields = ("name",)
 
 
