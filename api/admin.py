@@ -18,3 +18,17 @@ class LandAdmin(admin.ModelAdmin):
     list_filter = ( "area", "owner", "listed_by")
     search_fields = ( "area", "owner", "listed_by")
 
+
+@admin.register(Amenity)
+class AmenityAdmin(admin.ModelAdmin):
+    list_display = ("id", "name",)
+    list_filter = ("name",)
+    search_fields = ("name",)
+
+
+@admin.register(Feature)
+class FeatureAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "count")
+    list_filter = ( "name", "count")
+    search_fields = ("name",)
+

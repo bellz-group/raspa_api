@@ -43,7 +43,7 @@ class Amenity(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=40)
-    status = models.BooleanField(default=False)
+
     
     def __str__(self):
         return f"{self.name}"
@@ -70,8 +70,28 @@ class Building(models.Model):
 
 
     # Add ons
-    features = models.ManyToManyField(Feature)
     amenities = models.ManyToManyField(Amenity)
+
+
+    # Features  --------- 
+    # #features = models.ManyToManyField(Feature)
+    roms = models.IntegerField(("bedrooms"), default=0, null=False, blank=True,
+                               help_text=(
+            "No. of rooms"
+        ),)
+    bdrs = models.IntegerField(("bedrooms"), default=1, null=True, blank=True,
+                               help_text=(
+            "No. of bedrooms"
+        ),)
+    btrs = models.IntegerField(("bathrooms"), default=1,  null=True, blank=True,
+                               help_text=(
+            "No. of bathrooms"
+        ),)
+    flrs = models.IntegerField(("floors"), default=1, null=True, blank=True,
+                               help_text=(
+            "No. of floors"
+        ),)
+
 
     # Coordinates
     latitude = models.DecimalField(max_digits=18, decimal_places=15)

@@ -48,4 +48,10 @@ class BaseUserProfile(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
+        name = f"{self.user.first_name} {self.user.last_name}"
+        # print(f"Name: {name}")
+        # print(len(name))
+        if len(name) < 2:
+            return f'{self.user}'
         return f"{self.user.first_name} {self.user.last_name}"
+

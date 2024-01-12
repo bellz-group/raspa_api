@@ -1,6 +1,9 @@
 from django.shortcuts import render
-from rest_framework.views import APIView 
-from rest_framework.response import Response 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import generics 
+from .models import *
+from .serializers import *
 
 
 class Index(APIView):
@@ -11,3 +14,8 @@ class Index(APIView):
                 "developer": "Olaniyi George"
             })
 
+
+class BuildingsViewSet(generics.ListAPIView):
+    
+    queryset = Building.objects.all()
+    serializer_class = BuildingSerializer
