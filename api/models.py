@@ -1,7 +1,7 @@
 from django.db import models
 import uuid
 from account.models import BaseUserProfile
-from django.contrib.gis.db import models
+#from django.contrib.gis.db import models
 
 #  -------- SINGLE UNIT PROPERTIES --------
 
@@ -95,7 +95,7 @@ class Land(models.Model):
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    size = models.DecimalField(("size"), max_digits=18, decimal_places=3, 
+    area = models.DecimalField(("area"), max_digits=18, decimal_places=3, 
                                help_text=(
             "Size of the land plot in meters square"
         ),)
@@ -105,7 +105,7 @@ class Land(models.Model):
     longitude = models.DecimalField(max_digits=18, decimal_places=15)
 
     # Shape(GIS) : Poly shape of the land plot
-    border = models.PolygonField()
+    #border = models.MultiPolygonField()
     
     # Ownerships
     listed_by = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True)
@@ -113,6 +113,6 @@ class Land(models.Model):
     
 
     def __str__(self):
-        return f"{self.owner}'s {self.size} land"
+        return f"{self.owner}'s {self.area} land"
 
 #  -------- MULTI UNIT PROPERTIES --------
