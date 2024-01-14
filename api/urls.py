@@ -7,5 +7,5 @@ urlpatterns = [
 
     # ---------- BUILDING ----------
     path("buildings/", BuildingsListCreateViewSet.as_view(), name="building_list_create"),
-    path('building/<uuid:id>/', BuildingDetailView.as_view(), name="building_details"),
+    path('buildings/<uuid:pk>/', BuildingDetailView.as_view(), name="building_details"),
 ]

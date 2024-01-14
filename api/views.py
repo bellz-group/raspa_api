@@ -19,6 +19,7 @@ class BuildingsListCreateViewSet(generics.ListCreateAPIView):
     
     queryset = Building.objects.all()
     serializer_class = BuildingSerializer
+    lookup_field = "id"
 
 
 class BuildingDetailView(generics.RetrieveUpdateDestroyAPIView):
