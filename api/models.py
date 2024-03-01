@@ -42,13 +42,13 @@ class Amenity(models.Model):
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=40)
+    name = models.CharField(max_length=60, unique=True)
 
     
     def __str__(self):
         return f"{self.name}"
     
-class Building(models.Model):
+class DevelopedProperty(models.Model):
     """
     A representation of a landed property in form of a building
     """

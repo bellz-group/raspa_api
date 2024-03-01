@@ -5,8 +5,8 @@ from django.contrib import admin
 from .models import *
 
 
-@admin.register(Building)
-class BuildingAdmin(admin.ModelAdmin):
+@admin.register(DevelopedProperty)
+class DevelopedPropertyAdmin(admin.ModelAdmin):
     list_display = ("id", "property_name", "type", "built_at")
     list_filter = ( "listed_by", "type", "owner")
     search_fields = ( "property_name", "address", "description")

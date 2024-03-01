@@ -15,14 +15,14 @@ class Index(APIView):
             })
 
 
-class BuildingsListCreateViewSet(generics.ListCreateAPIView):
+class DevelopedPropertyListCreateViewSet(generics.ListCreateAPIView):
     
-    queryset = Building.objects.all()
-    serializer_class = BuildingSerializer
+    queryset = DevelopedProperty.objects.all()
+    serializer_class = DevelopedPropertySerializer
     lookup_field = "id"
 
 
-class BuildingDetailView(generics.RetrieveUpdateDestroyAPIView):
+class DevelopedPropertyDetailView(generics.RetrieveUpdateDestroyAPIView):
 
-    queryset = Building.objects.all()
-    serializer_class = BuildingSerializer
+    queryset = DevelopedProperty.objects.all()
+    serializer_class = DevelopedPropertySerializer

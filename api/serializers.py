@@ -2,7 +2,7 @@
 
 
 from rest_framework import serializers
-from .models import Building
+from .models import DevelopedProperty
 
 
 
@@ -10,8 +10,8 @@ from .models import Building
 
 
 
-class BuildingSerializer(serializers.ModelSerializer):
+class DevelopedPropertySerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Building
+        model = DevelopedProperty
         fields = "__all__"
