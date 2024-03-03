@@ -75,9 +75,9 @@ class DevelopedProperty(models.Model):
 
     # Features  --------- 
     # #features = models.ManyToManyField(Feature)
-    roms = models.IntegerField(("bedrooms"), default=0, null=False, blank=True,
+    size = models.IntegerField(("size"), default=0, null=False, blank=True,
                                help_text=(
-            "No. of rooms"
+            "Size in meter square: 1 plot is 120ft x 6ft : 668.901m2"
         ),)
     bdrs = models.IntegerField(("bedrooms"), default=1, null=True, blank=True,
                                help_text=(
@@ -93,7 +93,7 @@ class DevelopedProperty(models.Model):
         ),)
 
 
-    # Coordinates
+    # Center Coordinates 
     latitude = models.DecimalField(max_digits=18, decimal_places=15)
     longitude = models.DecimalField(max_digits=18, decimal_places=15)
 
