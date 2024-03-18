@@ -3,26 +3,20 @@ import uuid
 from account.models import BaseUserProfile
 #from django.contrib.gis.db import models
 
+# Invest Sale  Rent 
+ACTIONS = [
+    ("000", "NoActions"),
+    ("001", "Rent"),
+    ("010", "Sale"),
+    ("100", "Invest"),
+    ("011", "Sale-Rent"),
+    ("101", "Invest-Rent"),
+    ("110", "Sale-Invest"),
+    ("111", "Invest-Sale-Rent")
+]
+
 #  -------- SINGLE UNIT PROPERTIES --------
 
-class Feature(models.Model):
-    """
-    A representation for the features of a typical building 
-    EXAMPLES:
-        
-        "bdr", "bedroom"
-        "btr", "bathroom"
-        "flr", "floors"
-        
-    """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=25)
-    icon = models.ImageField(upload_to='icons/features/', blank=True, null=True)
-    count = models.IntegerField(default=0)
-
-
-    def __str__(self):
-        return f"{self.count} {self.name}(s)"
     
 class Amenity(models.Model):
     """
@@ -68,9 +62,11 @@ class DevelopedProperty(models.Model):
     description = models.TextField()
     owner = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name="my_building")
 
+    actions = models.CharField(max_length=3, choices=ACTIONS, default="101", null=False)
 
     # Add ons
     amenities = models.ManyToManyField(Amenity)
+    
 
 
     # Features  --------- 
@@ -106,6 +102,36 @@ class DevelopedProperty(models.Model):
     def __str__(self):
         return f"{self.type}: {self.property_name}"
     
+
+
+class Feature(models.Model):
+    """
+    A representation for a group of features of a typical building 
+    EXAMPLES:
+        
+        "bdr", "bedroom"
+        "btr", "bathroom"
+        "flr", "floors"
+        
+    """
+    FEATURES = [
+        ("bdr", "bedroom"),
+        ("btr", "bathroom"),
+        ("flr", "floors"),
+        ("ktc", "kitchen"),
+        ("rms", "rooms")
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    property = models.ForeignKey(DevelopedProperty, on_delete=models.CASCADE, null=True, blank=True, related_name="features")
+    name = models.CharField(max_length=10, choices=FEATURES, null=False, blank=False)
+    icon = models.ImageField(upload_to='icons/features/', blank=True, null=True)
+    count = models.IntegerField(default=0)
+
+
+
+    def __str__(self):
+        return f"{self.count} {self.name}(s)"
 
 
 #  -------- UNDEVELOPED PROPERTIES --------
