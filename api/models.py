@@ -114,6 +114,11 @@ class Feature(models.Model):
     name = models.CharField(max_length=10, choices=FEATURES, null=False, blank=False)
     images = models.ManyToManyField('FeatureImage', related_name='features', blank=True)
     count = models.IntegerField(default=0)
+    size = models.IntegerField(("size"), default=0, null=False, blank=True,
+                               help_text=(
+            "Size in meter square: 1 plot is 120ft x 6ft : 668.901m2"
+        ),)
+
 
 
 
