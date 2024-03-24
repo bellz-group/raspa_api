@@ -139,6 +139,13 @@ class FeatureImage(models.Model):
         return self.image.url
 
 
+class LandImage(models.Model):
+    image = models.ImageField(upload_to='land-images/')
+
+    def __str__(self):
+        return self.image.url
+    
+    
 #  -------- UNDEVELOPED PROPERTIES --------
 class Land(models.Model):
     """
@@ -157,6 +164,7 @@ class Land(models.Model):
 
     # Shape(GIS) : Poly shape of the land plot
     #border = models.MultiPolygonField()
+    images = models.ManyToManyField('LandImage', related_name='features', blank=True)
     
     # Ownerships
     listed_by = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name="land_listed_by_me")
