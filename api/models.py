@@ -1,6 +1,7 @@
 from django.db import models
 import uuid
 from account.models import BaseUserProfile
+from django.core.validators import MinValueValidator, MaxValueValidator
 #from django.contrib.gis.db import models
 
 # Invest Sale  Rent 
@@ -61,7 +62,7 @@ class DevelopedProperty(models.Model):
     type = models.CharField(max_length=12, choices=PURPOSE, default="residential")
     description = models.TextField()
     owner = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name="my_building")
-
+    images = models.ManyToManyField('PropertyImage', related_name='properties', blank=True)
     actions = models.CharField(max_length=3, choices=ACTIONS, default="101", null=False)
 
     # Add ons
@@ -75,24 +76,10 @@ class DevelopedProperty(models.Model):
                                help_text=(
             "Size in meter square: 1 plot is 120ft x 6ft : 668.901m2"
         ),)
-    bdrs = models.IntegerField(("bedrooms"), default=1, null=True, blank=True,
-                               help_text=(
-            "No. of bedrooms"
-        ),)
-    btrs = models.IntegerField(("bathrooms"), default=1,  null=True, blank=True,
-                               help_text=(
-            "No. of bathrooms"
-        ),)
-    flrs = models.IntegerField(("floors"), default=1, null=True, blank=True,
-                               help_text=(
-            "No. of floors"
-        ),)
-
 
     # Center Coordinates 
-    latitude = models.DecimalField(max_digits=18, decimal_places=15)
-    longitude = models.DecimalField(max_digits=18, decimal_places=15)
-
+    latitude = models.DecimalField(max_digits=18, decimal_places=15, validators=[MinValueValidator(-90), MaxValueValidator(90)])
+    longitude = models.DecimalField(max_digits=18, decimal_places=15, validators=[MinValueValidator(-180), MaxValueValidator(180)])
     # Timestamp
     built_at = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -125,13 +112,26 @@ class Feature(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     property = models.ForeignKey(DevelopedProperty, on_delete=models.CASCADE, null=True, blank=True, related_name="features")
     name = models.CharField(max_length=10, choices=FEATURES, null=False, blank=False)
-    icon = models.ImageField(upload_to='icons/features/', blank=True, null=True)
+    images = models.ManyToManyField('FeatureImage', related_name='features', blank=True)
     count = models.IntegerField(default=0)
 
 
 
     def __str__(self):
         return f"{self.count} {self.name}(s)"
+
+
+class PropertyImage(models.Model):
+    image = models.ImageField(upload_to='property-images/')
+
+    def __str__(self):
+        return self.image.url
+
+class FeatureImage(models.Model):
+    image = models.ImageField(upload_to='features/')
+
+    def __str__(self):
+        return self.image.url
 
 
 #  -------- UNDEVELOPED PROPERTIES --------
