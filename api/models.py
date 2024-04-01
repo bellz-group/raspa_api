@@ -1,3 +1,4 @@
+from typing import Any
 from django.db import models
 import uuid
 from account.models import BaseUserProfile
@@ -43,9 +44,9 @@ class Amenity(models.Model):
     def __str__(self):
         return f"{self.name}"
     
-class DevelopedProperty(models.Model):
+class Property(models.Model):
     """
-    A representation of a landed property in form of a building
+    A representation of a real estate landed property in form of; a building, land plot ...
     """
     PURPOSE = [
         ("residential", "residential"),
@@ -67,15 +68,22 @@ class DevelopedProperty(models.Model):
 
     # Add ons
     amenities = models.ManyToManyField(Amenity)
-    
+
+    # Features   
+    ## features = models.ManyToManyField(Feature)
 
 
-    # Features  --------- 
-    # #features = models.ManyToManyField(Feature)
     size = models.IntegerField(("size"), default=0, null=False, blank=True,
                                help_text=(
             "Size in meter square: 1 plot is 120ft x 6ft : 668.901m2"
         ),)
+    area = models.DecimalField(("area"), max_digits=18, decimal_places=3, 
+                               help_text=(
+            "Size of the land plot in meters square"
+        ),)
+
+    # Shape(GIS) : Poly shape of the land plot
+    #border = models.MultiPolygonField(null=True, )
 
     # Center Coordinates 
     latitude = models.DecimalField(max_digits=18, decimal_places=15, validators=[MinValueValidator(-90), MaxValueValidator(90)])
@@ -138,40 +146,85 @@ class FeatureImage(models.Model):
     def __str__(self):
         return self.image.url
 
-
-class LandImage(models.Model):
-    image = models.ImageField(upload_to='land-images/')
-
-    def __str__(self):
-        return self.image.url
     
 
-#  -------- UNDEVELOPED PROPERTIES --------
-class Land(models.Model):
-    """
-    A representation of a undeveloped land plots
-    """
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    area = models.DecimalField(("area"), max_digits=18, decimal_places=3, 
-                               help_text=(
-            "Size of the land plot in meters square"
-        ),)
-    
-    # Coordinates : The exact location of the land plot
-    latitude = models.DecimalField(max_digits=18, decimal_places=15)
-    longitude = models.DecimalField(max_digits=18, decimal_places=15)
-
-    # Shape(GIS) : Poly shape of the land plot
-    #border = models.MultiPolygonField()
-    images = models.ManyToManyField('LandImage', related_name='features', blank=True)
-    
-    # Ownerships
-    listed_by = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name="land_listed_by_me")
-    owner = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name="my_land_plots")
-    
-
-    def __str__(self):
-        return f"{self.owner}'s {self.area} land"
 
 #  -------- MULTI UNIT PROPERTIES --------
+
+
+
+#  -------- UTILS -------
+
+
+#  -------- PAYMENTS --------
+
+class Payment(models.Model):
+
+    payer = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
+    amount = models.FloatField(default=0)
+    provider = models.CharField(max_length=100)
+
+
+
+
+
+
+#  -------- CORE --------
+
+class Buy(models.Model):
+
+    buyer = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
+    seller =  models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
+    property = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
+    amount = models.FloatField(null=False, blank=False)
+    property = models.ForeignKey(Property)
+    agreement = models.FileField(upload_to="", storage= None )
+    duration = models.DurationField(null=False, blank=False)
+    payment = models.ForeignKey(Payment, null=False)
+
+class Rent(models.Model):
+
+    tenant = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
+    landlord =  models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
+    property = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
+    amount = models.FloatField(null=False, blank=False)
+    property = models.ForeignKey(Property)
+    agreement = models.FileField(upload_to="", storage= None )
+    duration = models.DurationField(null=False, blank=False)
+    payment = models.ForeignKey(Payment, null=False)
+
+class Sale(models.Model):
+
+    buyer = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
+    seller =  models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
+    property = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
+    amount = models.FloatField(null=False, blank=False)
+    property = models.ForeignKey(Property)
+    agreement = models.FileField(upload_to="", storage= None )
+    payment = models.ForeignKey(Payment, null=False)
+
+
+class Invest(models.Model):
+
+    investor = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
+    amount = models.FloatField(null=False, blank=False)
+    property = models.ForeignKey(Property)
+    agreement = models.FileField(upload_to="", storage= None )
+    duration = models.DurationField(null=False, blank=False)
+    payment = models.ForeignKey(Payment)
+    
+
+
+
+
+#  -------- BID --------
+
+class Bid(models.Model):
+
+    bidder = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
+    property = models.ForeignKey(Property, on_delete=models.SET_NULL, null=True, related_name="property-bids")
+    price_tag = models.FloatField(default=0)
+    payment = models.ForeignKey(Payment)
+
+
