@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
-from api.filters import DevdPropertyFilter 
+from api.filters import PropertyFilter 
 from .models import *
 from .serializers import *
 from rest_framework import filters, viewsets, status
@@ -18,12 +18,12 @@ class Index(APIView):
             })
 
 
-class DevelopedPropertyListCreateViewSet(generics.ListCreateAPIView):
+class PropertyListCreateViewSet(generics.ListCreateAPIView):
     
-    queryset = DevelopedProperty.objects.all()
-    serializer_class = DevelopedPropertySerializer
+    queryset = Property.objects.all()
+    serializer_class = PropertySerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-    filterset_class = DevdPropertyFilter
+    filterset_class = PropertyFilter
     filterset_fields = ('size', 'type', 'actions')
     search_fields = ['property_name', 'address', 'description' ]
 
@@ -58,10 +58,10 @@ class DevelopedPropertyListCreateViewSet(generics.ListCreateAPIView):
         return queryset
 
 
-class DevelopedPropertyDetailView(generics.RetrieveUpdateDestroyAPIView):
+class PropertyDetailView(generics.RetrieveUpdateDestroyAPIView):
 
-    queryset = DevelopedProperty.objects.all()
-    serializer_class = DevelopedPropertyDetailsSerializer
+    queryset = Property.objects.all()
+    serializer_class = PropertyDetailsSerializer
 
 
 class PropertyFeatures(viewsets.ModelViewSet):
@@ -77,7 +77,7 @@ class PropertyFeatures(viewsets.ModelViewSet):
         # Get property id and filter features by property
         property_id = self.kwargs.get("pk")
         try:
-            property = DevelopedProperty.objects.get(id=property_id)
+            property = Property.objects.get(id=property_id)
         except:
             property = None
         if property is None:
@@ -96,3 +96,15 @@ class Feature(generics.RetrieveAPIView):
     def get(self, request, *args, **kwargs):
 
         return super().get(request, *args, **kwargs)
+
+
+
+
+
+
+# ---------- CORE ACTIONS ----------
+
+# Pay
+# Rent
+# Bid
+# Book Tour
