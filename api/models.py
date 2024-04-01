@@ -180,7 +180,6 @@ class Buy(models.Model):
     amount = models.FloatField(null=False, blank=False)
     property = models.ForeignKey(Property)
     agreement = models.FileField(upload_to="", storage= None )
-    duration = models.DurationField(null=False, blank=False)
     payment = models.ForeignKey(Payment, null=False)
 
 class Rent(models.Model):
