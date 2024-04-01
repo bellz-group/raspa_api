@@ -96,8 +96,6 @@ class Property(models.Model):
 
     def __str__(self):
         return f"{self.type}: {self.property_name}"
-    
-
 
 class Feature(models.Model):
     """
@@ -118,7 +116,7 @@ class Feature(models.Model):
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    property = models.ForeignKey(DevelopedProperty, on_delete=models.CASCADE, null=True, blank=True, related_name="features")
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, null=True, blank=True, related_name="features")
     name = models.CharField(max_length=10, choices=FEATURES, null=True, blank=False)
     images = models.ManyToManyField('FeatureImage', related_name='features', blank=True)
     count = models.IntegerField(default=0)
@@ -174,44 +172,44 @@ class Payment(models.Model):
 
 class Buy(models.Model):
 
-    buyer = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
-    seller =  models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
-    property = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
+    buyer = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, related_name="purchased")
+    seller =  models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, null=False, blank=False)
     amount = models.FloatField(null=False, blank=False)
-    property = models.ForeignKey(Property)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, null=False, blank=False)
     agreement = models.FileField(upload_to="", storage= None )
-    payment = models.ForeignKey(Payment, null=False)
+    payment = models.ForeignKey(Payment, on_delete=models.CASCADE )
 
 class Rent(models.Model):
 
-    tenant = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
-    landlord =  models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
-    property = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
+    tenant = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, related_name="rented")
+    landlord =  models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, related_name="rented_out")
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, null=False, blank=False)
     amount = models.FloatField(null=False, blank=False)
-    property = models.ForeignKey(Property)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, null=False, blank=False)
     agreement = models.FileField(upload_to="", storage= None )
     duration = models.DurationField(null=False, blank=False)
-    payment = models.ForeignKey(Payment, null=False)
+    payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, null=True)
 
 class Sale(models.Model):
 
-    buyer = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
-    seller =  models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
-    property = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
+    buyer = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, related_name="have_bought")
+    seller =  models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, related_name="have_sold")
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, null=False, blank=False)
     amount = models.FloatField(null=False, blank=False)
-    property = models.ForeignKey(Property)
+    property = models.ForeignKey(Property,  on_delete=models.CASCADE, null=False, blank=False)
     agreement = models.FileField(upload_to="", storage= None )
-    payment = models.ForeignKey(Payment, null=False)
+    payment = models.ForeignKey(Payment, on_delete=models.CASCADE)
 
 
 class Invest(models.Model):
 
     investor = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
     amount = models.FloatField(null=False, blank=False)
-    property = models.ForeignKey(Property)
+    property = models.ForeignKey(Property,  on_delete=models.CASCADE, null=False, blank=False)
     agreement = models.FileField(upload_to="", storage= None )
     duration = models.DurationField(null=False, blank=False)
-    payment = models.ForeignKey(Payment)
+    payment = models.ForeignKey(Payment,  on_delete=models.SET_NULL, null=True)
     
 
 
@@ -222,8 +220,8 @@ class Invest(models.Model):
 class Bid(models.Model):
 
     bidder = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
-    property = models.ForeignKey(Property, on_delete=models.SET_NULL, null=True, related_name="property-bids")
+    property = models.ForeignKey(Property, on_delete=models.SET_NULL, null=True, related_name="property_bids")
     price_tag = models.FloatField(default=0)
-    payment = models.ForeignKey(Payment)
+    payment = models.ForeignKey(Payment,  on_delete=models.CASCADE)
 
 
