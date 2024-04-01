@@ -15,10 +15,10 @@ urlpatterns = [
 
 
     # ---------- CORE ACTIONS ---------
-    path("bids/"),
-    path("payments/"),
-    path("pay/<str:purpose>/"),
-    path("tour-bookings/<uuid:property-uuid>/"),
+    path("bids/", PropertyListCreateViewSet.as_view(), name="building_list_create"),
+    path("payments/", PropertyListCreateViewSet.as_view(), name="building_list_create"),
+    path("pay/<str:purpose>/", PropertyListCreateViewSet.as_view(), name="building_list_create"),
+    path("tour-bookings/<uuid:property_id>/", PropertyListCreateViewSet.as_view(), name="building_list_create"),
 
 
 
