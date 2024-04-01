@@ -13,18 +13,18 @@ class FeatureSerializer(serializers.ModelSerializer):
 
 
 
-class DevelopedPropertySerializer(serializers.ModelSerializer):
+class PropertySerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = DevelopedProperty
+        model = Property
         fields = "__all__"
 
 
-class DevelopedPropertyDetailsSerializer(serializers.ModelSerializer):
+class PropertyDetailsSerializer(serializers.ModelSerializer):
     features = FeatureSerializer(many=True, read_only=True)
 
     class Meta:
-        model = DevelopedProperty
+        model = Property
         fields = ["id", "property_name", "type", "actions", "description", "owner", "listed_by", "latitude", "longitude", "address", "amenities", "features"]
 
     def to_representation(self, instance):
