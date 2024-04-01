@@ -111,7 +111,7 @@ class Feature(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     property = models.ForeignKey(DevelopedProperty, on_delete=models.CASCADE, null=True, blank=True, related_name="features")
-    name = models.CharField(max_length=10, choices=FEATURES, null=False, blank=False)
+    name = models.CharField(max_length=10, choices=FEATURES, null=True, blank=False)
     images = models.ManyToManyField('FeatureImage', related_name='features', blank=True)
     count = models.IntegerField(default=0)
     size = models.IntegerField(("size"), default=0, null=False, blank=True,
@@ -145,7 +145,7 @@ class LandImage(models.Model):
     def __str__(self):
         return self.image.url
     
-    
+
 #  -------- UNDEVELOPED PROPERTIES --------
 class Land(models.Model):
     """
