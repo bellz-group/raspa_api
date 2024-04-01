@@ -5,18 +5,12 @@ from django.contrib import admin
 from .models import *
 
 
-@admin.register(DevelopedProperty)
-class DevelopedPropertyAdmin(admin.ModelAdmin):
-    list_display = ("id", "property_name", "type", "built_at")
+@admin.register(Property)
+class PropertyAdmin(admin.ModelAdmin):
+    list_display = ("id", "property_name", "type", "size", "built_at")
     list_filter = ( "listed_by", "type", "owner")
     search_fields = ( "property_name", "address", "description")
 
-
-@admin.register(Land)
-class LandAdmin(admin.ModelAdmin):
-    list_display = ("id", "area", "latitude", "longitude")
-    list_filter = ( "area", "owner", "listed_by")
-    search_fields = ( "area", "owner", "listed_by")
 
 
 @admin.register(Amenity)
