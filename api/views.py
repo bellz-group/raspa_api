@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from api.filters import DevdPropertyFilter 
 from .models import *
 from .serializers import *
-from rest_framework import filters
+from rest_framework import filters, viewsets, status
 from django.db.models import Q
 
 class Index(APIView):
@@ -24,14 +24,19 @@ class DevelopedPropertyListCreateViewSet(generics.ListCreateAPIView):
     serializer_class = DevelopedPropertySerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     filterset_class = DevdPropertyFilter
-    filterset_fields = ('size', 'type', 'bdrs', 'flrs', 'actions')
+    filterset_fields = ('size', 'type', 'actions')
     search_fields = ['property_name', 'address', 'description' ]
 
     def filter_queryset(self, queryset):
+        """
+        Gets the text representation of an action ('rent', 'sale', 'invest') from 
+        the param and returns properties that have that action in their actions code.
+        i.e if the action param is rent, it returns properties up for rent alone, 
+        up for rent and sale, and up for rent, sale and investments.
+        """
         queryset = super().filter_queryset(queryset)
-        actions = self.request.query_params.getlist('actions')
+        actions = self.request.query_params.getlist('action')
         if actions:
-
             action_codes = {
                 "NoActions": "000",
                 'rent': ['001', '011', '101', '111'],
@@ -57,3 +62,37 @@ class DevelopedPropertyDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = DevelopedProperty.objects.all()
     serializer_class = DevelopedPropertyDetailsSerializer
+
+
+class PropertyFeatures(viewsets.ModelViewSet):
+
+    queryset = Feature.objects.all()
+    serializer_class = FeatureSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        if getattr(self, 'swagger_fake_view', False):
+            # A queryset defined for schema generation metadata
+            return Feature.objects.none()
+        
+        # Get property id and filter features by property
+        property_id = self.kwargs.get("pk")
+        try:
+            property = DevelopedProperty.objects.get(id=property_id)
+        except:
+            property = None
+        if property is None:
+            return Response({"error":"Property not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        return Feature.objects.all()
+        #return Feature.objects.filter(property=property.id)
+    
+
+class Feature(generics.RetrieveAPIView):
+
+    queryset = Feature.objects.all()
+    serializer_class = FeatureSerializer
+
+
+    def get(self, request, *args, **kwargs):
+
+        return super().get(request, *args, **kwargs)
