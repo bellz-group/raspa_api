@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from api.filters import PropertyFilter 
 from .models import *
 from .serializers import *
-from rest_framework import filters, viewsets, status
+from rest_framework import filters, viewsets, status, permissions
 from django.db.models import Q
 
 class Index(APIView):
@@ -103,6 +103,92 @@ class Feature(generics.RetrieveAPIView):
 
 
 # ---------- CORE ACTIONS ----------
+
+class TourBookingView(viewsets.ModelViewSet):
+    """
+    Returns all avaliable property tours to admin users only. Allows filtering of property tours
+    based on number of "booked_by"s, the property and date of tour.
+    Also allows creating/scheduling property tours
+    """
+
+    queryset = PropertyTour.objects.all()
+    serializer_class = TourBookingSerializer
+    permission_classes = []
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ("property", )
+    lookup_field = 'pk'
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [permissions.IsAdminUser()]
+        # Build create permission into self.request.method == "POST"
+        return super().get_permissions()
+
+
+    def create(self, request, *args, **kwargs):
+        # make sure request user is the same as the manager of the property 
+
+        return super().create(request, *args, **kwargs)
+
+
+class BookTour(APIView):
+    """
+    On GET: Adds the request user to the booked_by field of a PropertyTour 
+    instance.
+    This effectively, books a tour on a property for the user
+    """
+    queryset = PropertyTour.objects.all()
+    serializer_class = TourBookingSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = "pk"
+
+
+
+    def get(self, request, *args, **kwargs):
+        tour_id = kwargs.get("pk")
+        try:
+            tour = PropertyTour.objects.get(id=tour_id)
+        except:
+            tour = None
+        
+        user = request.user
+        print(user)
+
+        return Response(
+            {
+                "message": "This is the index route of the RASPA API",
+                "developer": "Olaniyi George"
+            })
+
+
+
+    def update(self, request, *args, **kwargs):
+        # if the request user is not the property lister, allow update on only the 
+        return super().update(request, *args, **kwargs)
+    
+
+class BuyView(viewsets.ModelViewSet):
+
+    queryset = Sale.objects.all()
+    serializer_class = SaleSerializer
+
+
+    def create(self, request, *args, **kwargs):
+
+        return super().create(request, *args, **kwargs)
+
+class PaymentView(APIView):
+
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+    
+    def get(self, request, *args, **kwargs):
+
+        return Response({})
+
+
+
+    
 
 # Pay
 # Rent
