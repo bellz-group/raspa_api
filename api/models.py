@@ -4,6 +4,7 @@ import uuid
 from account.models import BaseUserProfile
 from django.core.validators import MinValueValidator, MaxValueValidator
 #from django.contrib.gis.db import models
+from shortuuid.django_fields import ShortUUIDField
 
 # Invest Sale  Rent 
 ACTIONS = [
@@ -55,14 +56,16 @@ class Property(models.Model):
     ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    listed_by = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name="buildings_i_listed")
+    # Management & Ownership
+    manager = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name="buildings_i_listed")
+    owner = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name="my_buildings")
+
 
     # Building(property) Info
     property_name = models.CharField(max_length=200)
     address = models.CharField(max_length=300)
     type = models.CharField(max_length=12, choices=PURPOSE, default="residential")
     description = models.TextField()
-    owner = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name="my_building")
     images = models.ManyToManyField('PropertyImage', related_name='properties', blank=True)
     actions = models.CharField(max_length=3, choices=ACTIONS, default="101", null=False)
 
@@ -162,23 +165,21 @@ class Payment(models.Model):
     payer = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
     amount = models.FloatField(default=0)
     provider = models.CharField(max_length=100)
+    cleared = models.BooleanField(default=False)
 
 
+
+class PropertyTour(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, null=False, related_name="property_tours")
+    booked_by = models.ManyToManyField(BaseUserProfile, blank=True)
+    date = models.DateTimeField()
 
 
 
 
 #  -------- CORE --------
-
-class Buy(models.Model):
-
-    buyer = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, related_name="purchased")
-    seller =  models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True)
-    property = models.ForeignKey(Property, on_delete=models.CASCADE, null=False, blank=False)
-    amount = models.FloatField(null=False, blank=False)
-    property = models.ForeignKey(Property, on_delete=models.CASCADE, null=False, blank=False)
-    agreement = models.FileField(upload_to="", storage= None )
-    payment = models.ForeignKey(Payment, on_delete=models.CASCADE )
 
 class Rent(models.Model):
 
@@ -192,7 +193,10 @@ class Rent(models.Model):
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, null=True)
 
 class Sale(models.Model):
-
+    """
+    Represents an instance of a sale. Keeps track of the all the information 
+    about the sale. 
+    """
     buyer = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, related_name="have_bought")
     seller =  models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, related_name="have_sold")
     property = models.ForeignKey(Property, on_delete=models.CASCADE, null=False, blank=False)
