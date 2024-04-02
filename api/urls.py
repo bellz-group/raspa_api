@@ -15,11 +15,19 @@ urlpatterns = [
 
 
     # ---------- CORE ACTIONS ---------
-    path("bids/", PropertyListCreateViewSet.as_view(), name="building_list_create"),
-    path("payments/", PropertyListCreateViewSet.as_view(), name="building_list_create"),
-    path("pay/<str:purpose>/", PropertyListCreateViewSet.as_view(), name="building_list_create"),
-    path("tour-bookings/<uuid:property_id>/", PropertyListCreateViewSet.as_view(), name="building_list_create"),
+    # Bookings
+    path("tour-bookings/", TourBookingView.as_view({"get": "list", "post": "create"}), name="tour_bookings_list_create"),
+    path("book-tour/<uuid:pk>/", BookTour.as_view(), name="book_property_tour"),
+    # Sale
+    path('buy/', BuyView.as_view({"get": "list"}), name="buy_property"),
+    # Payment
+    path("payments/", PaymentView.as_view(), name="payments"),
 
+    # -----
+    path("bids/", PropertyListCreateViewSet.as_view(), name="building_list_create"),
+    
+    path("pay/<str:purpose>/", PropertyListCreateViewSet.as_view(), name="building_list_create"),
+    
 
 
 
