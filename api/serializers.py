@@ -1,6 +1,3 @@
-
-
-
 from rest_framework import serializers
 from .models import *
 
@@ -12,13 +9,17 @@ class FeatureSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-
 class PropertySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Property
         fields = "__all__"
 
+class PropertyListingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PropertyListing
+        fields = "__all__"
 
 class PropertyDetailsSerializer(serializers.ModelSerializer):
     features = FeatureSerializer(many=True, read_only=True)
@@ -41,10 +42,16 @@ class TourBookingSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class SaleSerializer(serializers.ModelSerializer):
+class BookingSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Sale
+        model = Booking
+        fields = "__all__"
+
+class PurshaseSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Purchase
         fields = "__all__"
 
 
