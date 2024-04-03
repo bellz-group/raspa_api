@@ -6,6 +6,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 #from django.contrib.gis.db import models
 from shortuuid.django_fields import ShortUUIDField
 
+
 # Invest Sale  Rent 
 ACTIONS = [
     ("000", "NoActions"),
@@ -18,6 +19,8 @@ ACTIONS = [
     ("111", "Invest-Sale-Rent")
 ]
 
+    
+#  -------- MULTI UNIT PROPERTIES --------
 #  -------- SINGLE UNIT PROPERTIES --------
 
     
@@ -62,7 +65,7 @@ class Property(models.Model):
 
 
     # Building(property) Info
-    property_name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
     address = models.CharField(max_length=300)
     type = models.CharField(max_length=12, choices=PURPOSE, default="residential")
     description = models.TextField()
@@ -82,7 +85,7 @@ class Property(models.Model):
         ),)
     area = models.DecimalField(("area"), max_digits=18, decimal_places=3, 
                                help_text=(
-            "Size of the land plot in meters square"
+            "Size of the land plot in meters square: 1 plot is 120ft x 6ft : 668.901m2"
         ),)
 
     # Shape(GIS) : Poly shape of the land plot
@@ -98,7 +101,19 @@ class Property(models.Model):
 
 
     def __str__(self):
-        return f"{self.type}: {self.property_name}"
+        return f"{self.type}: {self.name}"
+
+class PropertyListing(models.Model):
+    LISTING_TYPES = [
+        ('rent', 'Rent'),
+        ('sale', 'Sale'),
+        ('investment', 'Investment')
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    listing_type = models.CharField(max_length=20, choices=LISTING_TYPES)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
 
 class Feature(models.Model):
     """
@@ -134,7 +149,6 @@ class Feature(models.Model):
     def __str__(self):
         return f"{self.count} {self.name}(s)"
 
-
 class PropertyImage(models.Model):
     image = models.ImageField(upload_to='property-images/')
 
@@ -147,79 +161,131 @@ class FeatureImage(models.Model):
     def __str__(self):
         return self.image.url
 
-    
-
-
-
-#  -------- MULTI UNIT PROPERTIES --------
-
-
 
 #  -------- UTILS -------
+class PropertyTour(models.Model):
 
+    TYPE = [
+        ("virtual", "virtual"),
+        ("in-person", "in-person"),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, null=False, related_name="property_tours")
+    tour_type = models.CharField(max_length=12, choices=TYPE, default="in-person")
+    duration = models.DurationField()
+    datetime = models.DateTimeField()
+
+class Booking(models.Model):
+
+    user = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE)
+    property_tour = models.ForeignKey(PropertyTour, on_delete=models.CASCADE)
+    
 
 #  -------- PAYMENTS --------
 
 class Payment(models.Model):
 
+    STATUS = [
+        ("successfull", "successfull"),
+        ("pending", "pending"),
+        ("failed", "failed"),
+        ("denied", "denied"),
+    ]
+
+    id = ShortUUIDField(
+        length=10,
+        max_length=20,
+        prefix="rasp_pay_",
+        alphabet="abcdefghijklmnopqrstuvwxyz0123456789",
+        primary_key=True,
+        editable=False
+    )
+
+    #id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # transaction_id = models.CharField(max_length=500)
     payer = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
-    amount = models.FloatField(default=0)
-    provider = models.CharField(max_length=100)
-    cleared = models.BooleanField(default=False)
-
-
-
-class PropertyTour(models.Model):
-
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    property = models.ForeignKey(Property, on_delete=models.CASCADE, null=False, related_name="property_tours")
-    booked_by = models.ManyToManyField(BaseUserProfile, blank=True)
-    date = models.DateTimeField()
-
-
-
+    amount = models.FloatField(default=1)
+    status = models.CharField(max_length=12, choices=STATUS, default="pending")
+    
+    payment_provider = models.CharField(max_length=100)
+    date = models.DateTimeField(auto_now_add=True)
 
 #  -------- CORE --------
 
-class Rent(models.Model):
+class Rental(models.Model):
+    """
 
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    
     tenant = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, related_name="rented")
     landlord =  models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, related_name="rented_out")
     property = models.ForeignKey(Property, on_delete=models.CASCADE, null=False, blank=False)
+    
     amount = models.FloatField(null=False, blank=False)
-    property = models.ForeignKey(Property, on_delete=models.CASCADE, null=False, blank=False)
-    agreement = models.FileField(upload_to="", storage= None )
-    duration = models.DurationField(null=False, blank=False)
+    contract = models.FileField(upload_to="rental-contracts/", storage= None )
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, null=True)
 
-class Sale(models.Model):
+    duration = models.DurationField(null=False, blank=False)
+    datetime = models.DateTimeField()
+
+
+class Purchase(models.Model):
     """
-    Represents an instance of a sale. Keeps track of the all the information 
-    about the sale. 
+
     """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    
     buyer = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, related_name="have_bought")
     seller =  models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, related_name="have_sold")
     property = models.ForeignKey(Property, on_delete=models.CASCADE, null=False, blank=False)
+    
+
     amount = models.FloatField(null=False, blank=False)
-    property = models.ForeignKey(Property,  on_delete=models.CASCADE, null=False, blank=False)
-    agreement = models.FileField(upload_to="", storage= None )
-    payment = models.ForeignKey(Payment, on_delete=models.CASCADE)
+    contract = models.FileField(upload_to="purchase-contracts/", storage= None ) # Add link to soft agreement
+    payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, null=True, blank=True)
+
+    datetime = models.DateTimeField()
 
 
 class Invest(models.Model):
+    """
+
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     investor = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
-    amount = models.FloatField(null=False, blank=False)
     property = models.ForeignKey(Property,  on_delete=models.CASCADE, null=False, blank=False)
-    agreement = models.FileField(upload_to="", storage= None )
-    duration = models.DurationField(null=False, blank=False)
+    
+    amount = models.FloatField(null=False, blank=False)
     payment = models.ForeignKey(Payment,  on_delete=models.SET_NULL, null=True)
     
+    duration = models.DurationField(null=False, blank=False)
+    datetime = models.DateTimeField()
 
 
 
 
-#  -------- BID --------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#  -------- V2 --------
 
 class Bid(models.Model):
 
