@@ -58,6 +58,15 @@ class PropertyListCreateViewSet(generics.ListCreateAPIView):
         return queryset
 
 
+class PropertyListingsViewset(generics.ListCreateAPIView):
+    
+    queryset = PropertyListing.objects.all()
+    serializer_class = PropertyListingSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+    filterset_fields = ("property__size", "listing_type")
+    search_fields = ['property__name', 'property__address', 'property__description' ]
+
+    
 class PropertyDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Property.objects.all()
@@ -104,7 +113,7 @@ class Feature(generics.RetrieveAPIView):
 
 # ---------- CORE ACTIONS ----------
 
-class TourBookingView(viewsets.ModelViewSet):
+class PropertyToursView(generics.ListCreateAPIView):
     """
     Returns all avaliable property tours to admin users only. Allows filtering of property tours
     based on number of "booked_by"s, the property and date of tour.
@@ -119,8 +128,8 @@ class TourBookingView(viewsets.ModelViewSet):
     lookup_field = 'pk'
 
     def get_permissions(self):
-        if self.request.method == "GET":
-            return [permissions.IsAdminUser()]
+        # if self.request.method == "GET":
+        #     return [permissions.IsAdminUser()]
         # Build create permission into self.request.method == "POST"
         return super().get_permissions()
 
@@ -130,52 +139,35 @@ class TourBookingView(viewsets.ModelViewSet):
 
         return super().create(request, *args, **kwargs)
 
-
-class BookTour(APIView):
+class BookingsView(generics.ListCreateAPIView):
     """
-    On GET: Adds the request user to the booked_by field of a PropertyTour 
-    instance.
-    This effectively, books a tour on a property for the user
+    On GET: Lists Bookings
+    On POST: Books a tour on a property for the user
     """
-    queryset = PropertyTour.objects.all()
-    serializer_class = TourBookingSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    lookup_field = "pk"
+    queryset = Booking.objects.all()
+    serializer_class = BookingSerializer
+    permission_classes = []
+    lookup_field = 'pk'
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [permissions.IsAuthenticated]
+        return super().get_permissions()
 
 
 
-    def get(self, request, *args, **kwargs):
-        tour_id = kwargs.get("pk")
-        try:
-            tour = PropertyTour.objects.get(id=tour_id)
-        except:
-            tour = None
-        
-        user = request.user
-        print(user)
+class BuyView(APIView):
+    """
+    Gets the uuid of the sale instance
+    Checks the status of the sale to confirm if its still open or pending
+    If still open....
+        Get the sale price
+        Make payment
+        Link payment to sale and 
+    """
 
-        return Response(
-            {
-                "message": "This is the index route of the RASPA API",
-                "developer": "Olaniyi George"
-            })
+    pass
 
-
-
-    def update(self, request, *args, **kwargs):
-        # if the request user is not the property lister, allow update on only the 
-        return super().update(request, *args, **kwargs)
-    
-
-class BuyView(viewsets.ModelViewSet):
-
-    queryset = Sale.objects.all()
-    serializer_class = SaleSerializer
-
-
-    def create(self, request, *args, **kwargs):
-
-        return super().create(request, *args, **kwargs)
 
 class PaymentView(APIView):
 
@@ -190,7 +182,4 @@ class PaymentView(APIView):
 
     
 
-# Pay
-# Rent
-# Bid
-# Book Tour
+
