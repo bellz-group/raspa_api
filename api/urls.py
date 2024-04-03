@@ -9,17 +9,23 @@ urlpatterns = [
     path("properties/", PropertyListCreateViewSet.as_view(), name="building_list_create"),
     path('properties/<uuid:pk>/', PropertyDetailView.as_view(), name="building_details"),
 
+    # ---------- Properties Listings ----------
+    path("listings/", PropertyListingsViewset.as_view(), name="building_list_create"),
+    
     # ---------- Property Features ---------
-    path('property/<uuid:pk>/features/', PropertyFeatures.as_view({"get": "list"}), name="property_amenities"),
-    path('feature/<uuid:pk>/', Feature.as_view(), name="property_amenities"),
+    path('property/<uuid:pk>/features/', PropertyFeatures.as_view({"get": "list"}), name="property_features"),
+    path('feature/<uuid:pk>/', Feature.as_view(), name="property_feature"),
 
 
     # ---------- CORE ACTIONS ---------
+    
     # Bookings
-    path("tour-bookings/", TourBookingView.as_view({"get": "list", "post": "create"}), name="tour_bookings_list_create"),
-    path("book-tour/<uuid:pk>/", BookTour.as_view(), name="book_property_tour"),
-    # Sale
-    path('buy/', BuyView.as_view({"get": "list"}), name="buy_property"),
+    path("property-tours/", PropertyToursView.as_view(), name="property_tours"),
+    path("tour-bookings/", BookingsView.as_view(), name="list_book_tours"),
+    
+    # Purchase
+    path('buy-property/<uuid:pk>/', BuyView.as_view(), name="buy_property"),
+    
     # Payment
     path("payments/", PaymentView.as_view(), name="payments"),
 
