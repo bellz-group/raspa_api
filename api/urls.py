@@ -11,6 +11,7 @@ urlpatterns = [
 
     # ---------- Properties Listings ----------
     path("listings/", PropertyListingsViewset.as_view(), name="building_list_create"),
+    path('listings/<uuid:pk>/', ListingDetailView.as_view(), name="listings_details"),
     
     # ---------- Property Features ---------
     path('property/<uuid:pk>/features/', PropertyFeatures.as_view({"get": "list"}), name="property_features"),
