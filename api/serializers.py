@@ -15,24 +15,33 @@ class PropertySerializer(serializers.ModelSerializer):
         model = Property
         fields = "__all__"
 
-class PropertyListingSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = PropertyListing
-        fields = "__all__"
-
 class PropertyDetailsSerializer(serializers.ModelSerializer):
     features = FeatureSerializer(many=True, read_only=True)
 
     class Meta:
         model = Property
-        fields = ["id", "property_name", "type", "actions", "description", "owner", "manager", "latitude", "longitude", "address", "amenities", "features"]
+        fields = ["id", "name", "type", "size", "actions", "description", "owner", "manager", "latitude", "longitude", "address", "amenities", "features"]
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         features = instance.features.all()
         representation['features'] = FeatureSerializer(features, many=True).data
         return representation
+
+
+class PropertyListingSerializer(serializers.ModelSerializer):
+    property = serializers.SerializerMethodField()
+
+
+    class Meta:
+        model = PropertyListing
+        fields = ["id", "listing_type", "price", "property" ]
+
+    def get_property(self, obj):
+        try:
+            return PropertyDetailsSerializer(obj.property).data
+        except:
+            return None
 
 
 class TourBookingSerializer(serializers.ModelSerializer):
