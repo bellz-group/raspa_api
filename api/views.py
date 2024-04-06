@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
-from api.filters import PropertyFilter 
+from api.filters import PropertyFilter, PropertyListingFilter 
 from .models import *
 from .serializers import *
 from rest_framework import filters, viewsets, status, permissions
@@ -25,7 +25,7 @@ class PropertyListCreateViewSet(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     filterset_class = PropertyFilter
     filterset_fields = ('size', 'type', 'actions')
-    search_fields = ['property_name', 'address', 'description' ]
+    search_fields = ['name', 'address', 'description' ]
 
     def filter_queryset(self, queryset):
         """
@@ -62,11 +62,19 @@ class PropertyListingsViewset(generics.ListCreateAPIView):
     
     queryset = PropertyListing.objects.all()
     serializer_class = PropertyListingSerializer
+    filterset_class = PropertyListingFilter
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-    filterset_fields = ("property__size", "listing_type")
+    # filterset_fields = ("property__size", "price", "property__features__name", "property__type", "property__features__count", "listing_type")
     search_fields = ['property__name', 'property__address', 'property__description' ]
 
-    
+
+class ListingDetailView(generics.RetrieveUpdateDestroyAPIView):
+
+    queryset = PropertyListing.objects.all()
+    serializer_class = PropertyListingSerializer
+
+
+
 class PropertyDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Property.objects.all()
