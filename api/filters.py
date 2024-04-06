@@ -1,5 +1,5 @@
 import django_filters
-from .models import Property
+from .models import Property, PropertyListing
 
 
 
@@ -15,3 +15,16 @@ class PropertyFilter(django_filters.FilterSet):
     class Meta:
         model = Property
         fields = ['size__lte', 'size__gte', 'type', 'actions']
+
+
+
+class PropertyListingFilter(django_filters.FilterSet):
+    '''
+    Customize filter to be case insensitive
+    '''
+    price__lte = django_filters.NumberFilter(field_name="price", lookup_expr="lte")
+    price__gte = django_filters.NumberFilter(field_name="price", lookup_expr="gte")
+    
+    class Meta:
+        model = PropertyListing
+        fields = ["property__size", "price", "property__features__name", "property__type", "property__features__count", "listing_type", 'price__lte', 'price__gte', ]
