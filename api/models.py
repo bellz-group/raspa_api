@@ -79,14 +79,11 @@ class Property(models.Model):
     ## features = models.ManyToManyField(Feature)
 
 
-    size = models.IntegerField(("size"), default=0, null=False, blank=True,
+    size = models.FloatField(("size"), default=0, null=False, blank=True,
                                help_text=(
             "Size in meter square: 1 plot is 120ft x 6ft : 668.901m2"
         ),)
-    area = models.DecimalField(("area"), max_digits=18, decimal_places=3, 
-                               help_text=(
-            "Size of the land plot in meters square: 1 plot is 120ft x 6ft : 668.901m2"
-        ),)
+
 
     # Shape(GIS) : Poly shape of the land plot
     #border = models.MultiPolygonField(null=True, )
@@ -113,7 +110,7 @@ class PropertyListing(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
     listing_type = models.CharField(max_length=20, choices=LISTING_TYPES)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.FloatField()
 
 class Feature(models.Model):
     """
@@ -138,7 +135,7 @@ class Feature(models.Model):
     name = models.CharField(max_length=10, choices=FEATURES, null=True, blank=False)
     images = models.ManyToManyField('FeatureImage', related_name='features', blank=True)
     count = models.IntegerField(default=0)
-    size = models.IntegerField(("size"), default=0, null=False, blank=True,
+    size = models.FloatField(("size"), default=0, null=False, blank=True,
                                help_text=(
             "Size in meter square: 1 plot is 120ft x 6ft : 668.901m2"
         ),)
