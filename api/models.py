@@ -26,8 +26,9 @@ ACTIONS = [
     
 class Amenity(models.Model):
     """
-    A representation of the basic amenities, finishing and vanity metrics users 
-    use in rating and making decisions about properties
+    A representation of the basic amenities, finishings and vanity metrics
+    users use in rating and making decisions about acquiring properties.
+    
     EXAMPLES:
         
         POP/PVC
@@ -50,12 +51,14 @@ class Amenity(models.Model):
     
 class Property(models.Model):
     """
-    A representation of a real estate landed property in form of; a building, land plot ...
+    A representation of a real estate landed property in form of; 
+    a developed(buildings, sheds, ) or an undeveloped(land plot) landed asset
     """
     PURPOSE = [
         ("residential", "residential"),
         ("industrial", "industrial"),
         ("commercial", "commercial"),
+        ("land", "land"),
     ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
