@@ -3,6 +3,7 @@ Django==5.0.1
 django-filter==23.3
 djangorestframework==3.14.0
 drf-yasg==1.21.7
+gunicorn==21.2.0
 inflection==0.5.1
 packaging==23.2
 pillow==10.2.0
