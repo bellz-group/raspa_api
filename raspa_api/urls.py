@@ -39,9 +39,10 @@ urlpatterns = [
 
     path("api/", include("api.urls")),
     path("accounts/", include("account.urls")),
+]
 
 
-    
-
-
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+if settings.ENVT == "DEV":
+    urlpatterns += static(settings.STATIC_URL)
+elif settings.ENVT == "STAGE":
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
