@@ -22,6 +22,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-a^@++moh%r_&u^n--k(1xx(oqtg%9-4k=3^iawzeh!--2a!r7b"
 
+
+# Deployment Environment  --- "STAGE" | "DEV"   -----  DEBUG is True for both
+ENVT = "STAGE"
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -127,8 +132,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+if ENVT == "DEV":
+    STATIC_URL = '/static/'
+    STATICFILES_DIRS = [BASE_DIR / "static"]
+elif ENVT == "STAGE":
+    STATIC_URL = '/static/'
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -142,6 +152,17 @@ AUTH_USER_MODEL = 'account.BaseUser'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+
+if ENVT == "DEV":
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+elif ENVT == "STAGE":
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+
+
 
 
 REST_FRAMEWORK = {
