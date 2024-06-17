@@ -21,7 +21,7 @@ class PropertyListingAdmin(admin.ModelAdmin):
 
 @admin.register(Amenity)
 class AmenityAdmin(admin.ModelAdmin):
-    list_display = ("id", "name",)
+    list_display = ("id", "type", "name",)
     #list_filter = ("name",)
     search_fields = ("name",)
 
@@ -33,12 +33,20 @@ class FeatureAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
-
 @admin.register(PropertyTour)
 class TourAdmin(admin.ModelAdmin):
     list_display = ("id", "property", "duration", "datetime")
     list_filter = ( "property", "datetime")
     search_fields = ("property__address", "property__description")
+
+
+@admin.register(PropertyImage)
+class PropertyImageAdmin(admin.ModelAdmin):
+    list_display = ["property", 'image']
+    list_filter = ['property']
+    search_fields = ["property"]
+
+
 
 # ---------- CORE ----------
 

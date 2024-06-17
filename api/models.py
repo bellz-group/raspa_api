@@ -41,6 +41,7 @@ class Amenity(models.Model):
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    type = models.CharField(max_length=150, default="Amenity", null=True, blank=True)
     name = models.CharField(max_length=60, unique=True)
 
     
@@ -100,6 +101,10 @@ class Property(models.Model):
 
     def __str__(self):
         return f"{self.type}: {self.name}"
+    
+
+    def my_images(self):
+        return PropertyImage.objects.filter(property=self.id)
 
 
 def get_default_contract():
@@ -157,6 +162,7 @@ class Feature(models.Model):
         return f"{self.count} {self.name}(s)"
 
 class PropertyImage(models.Model):
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, null=True, related_name='propertyImages')
     image = models.ImageField(upload_to='property-images/')
 
     def __str__(self):
