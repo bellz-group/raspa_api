@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     "account.apps.AccountConfig",
 
     # Third Party Apps
-    "rest_framework",
+    'rest_framework',
+    'rest_framework_simplejwt',
     'drf_yasg',
     'django_filters',
 ]

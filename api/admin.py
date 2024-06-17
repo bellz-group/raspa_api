@@ -36,7 +36,7 @@ class FeatureAdmin(admin.ModelAdmin):
 
 @admin.register(PropertyTour)
 class TourAdmin(admin.ModelAdmin):
-    list_display = ("id", "property", "datetime")
+    list_display = ("id", "property", "duration", "datetime")
     list_filter = ( "property", "datetime")
     search_fields = ("property__address", "property__description")
 

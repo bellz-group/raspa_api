@@ -4,7 +4,6 @@ import uuid
 from account.models import BaseUserProfile
 from django.core.validators import MinValueValidator, MaxValueValidator
 #from django.contrib.gis.db import models
-from shortuuid.django_fields import ShortUUIDField
 
 
 # Invest Sale  Rent 
@@ -29,8 +28,7 @@ class Amenity(models.Model):
     A representation of the basic amenities, finishings and vanity metrics
     users use in rating and making decisions about acquiring properties.
     
-    EXAMPLES:
-        
+    EXAMPLES:        
         POP/PVC
         Gated 
         Water running
@@ -67,7 +65,7 @@ class Property(models.Model):
     owner = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name="my_buildings")
 
 
-    # Building(property) Info
+    # Buildi property) Info
     name = models.CharField(max_length=200)
     address = models.CharField(max_length=300)
     type = models.CharField(max_length=12, choices=PURPOSE, default="residential")
@@ -103,6 +101,10 @@ class Property(models.Model):
     def __str__(self):
         return f"{self.type}: {self.name}"
 
+
+def get_default_contract():
+    return 
+
 class PropertyListing(models.Model):
     LISTING_TYPES = [
         ('rent', 'Rent'),
@@ -112,8 +114,15 @@ class PropertyListing(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    address = models.CharField(max_length=200, null=True, blank=True) # The exact address of this listng in this property e.g apartment number
     listing_type = models.CharField(max_length=20, choices=LISTING_TYPES)
     price = models.FloatField()
+
+    contract = models.FileField(upload_to="rental-contracts/", default="rental-contracts/default_contract.docx", blank=True)
+
+    def __str__(self):
+        return f"{self.listing_type} on {self.property}"
+    
 
 class Feature(models.Model):
     """
@@ -126,6 +135,7 @@ class Feature(models.Model):
         
     """
     FEATURES = [
+        ("blg", "buildings"),
         ("bdr", "bedroom"),
         ("btr", "bathroom"),
         ("flr", "floors"),
@@ -142,9 +152,6 @@ class Feature(models.Model):
                                help_text=(
             "Size in meter square: 1 plot is 120ft x 6ft : 668.901m2"
         ),)
-
-
-
 
     def __str__(self):
         return f"{self.count} {self.name}(s)"
@@ -192,15 +199,8 @@ class Payment(models.Model):
         ("failed", "failed"),
         ("denied", "denied"),
     ]
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    id = ShortUUIDField(
-        length=10,
-        max_length=20,
-        prefix="rasp_pay_",
-        alphabet="abcdefghijklmnopqrstuvwxyz0123456789",
-        primary_key=True,
-        editable=False
-    )
 
     #id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # transaction_id = models.CharField(max_length=500)
@@ -221,14 +221,18 @@ class Rental(models.Model):
     
     tenant = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, related_name="rented")
     landlord =  models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, related_name="rented_out")
-    property = models.ForeignKey(Property, on_delete=models.CASCADE, null=False, blank=False)
+    listing = models.ForeignKey(PropertyListing, on_delete=models.CASCADE, default="f55470e2-aeed-4f5f-a329-6ddc37b83455", null=False, blank=False)
     
     amount = models.FloatField(null=False, blank=False)
-    contract = models.FileField(upload_to="rental-contracts/", storage= None )
-    payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, null=True)
+    payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, null=True, blank=True)
 
     duration = models.DurationField(null=False, blank=False)
     datetime = models.DateTimeField()
+
+
+    def __save__(self, *args, **kwargs):
+        self.amount = self.listing.price
+        return super().save(*args, **kwargs)
 
 
 class Purchase(models.Model):

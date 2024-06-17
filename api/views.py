@@ -74,7 +74,6 @@ class ListingDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PropertyListingSerializer
 
 
-
 class PropertyDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Property.objects.all()
