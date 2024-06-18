@@ -28,9 +28,9 @@ class AmenityAdmin(admin.ModelAdmin):
 
 @admin.register(Feature)
 class FeatureAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "count")
-    list_filter = ( "name", "count")
-    search_fields = ("name",)
+    list_display = ("id", "property", "name", "count")
+    list_filter = ( "name", "property", "count")
+    search_fields = ("name", "property",)
 
 
 @admin.register(PropertyTour)

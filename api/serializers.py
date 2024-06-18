@@ -1,4 +1,7 @@
 from rest_framework import serializers
+from account.models import BaseUser
+
+from account.serializers import BaseUserProfileSerializer
 from .models import *
 
 
@@ -30,13 +33,12 @@ class PropertyDetailsSerializer(serializers.ModelSerializer):
     features = FeatureSerializer(many=True, read_only=True)
     amenities = AmenitySerializer(many=True, read_only=True)
     propertyImages = serializers.SerializerMethodField()
+    owner = BaseUserProfileSerializer(read_only=True)
+    manager = BaseUserProfileSerializer(read_only=True)
 
     class Meta:
         model = Property
         fields = ["id", "name", "type", "size", "actions", "propertyImages", "description", "owner", "manager", "latitude", "longitude", "address", "amenities", "features"]
-
-    # def get_images(self, obj):
-    #     images = obj.my_images
 
     def get_propertyImages(self, obj):
         imgs = PropertyImage.objects.filter(property=obj)
