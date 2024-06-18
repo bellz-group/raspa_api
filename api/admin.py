@@ -59,14 +59,14 @@ class SaleAdmin(admin.ModelAdmin):
 
 @admin.register(Rental)
 class RentAdmin(admin.ModelAdmin):
-    list_display = ("id", )
-    list_filter = ("tenant",)
+    list_display = ("id", "listing", "amount", "duration", "payment")
+    list_filter = ("tenant", "listing", 'duration')
     search_fields = ("tenant",)
 
 
 @admin.register(Invest)
 class InvestAdmin(admin.ModelAdmin):
-    list_display = ("id", )
+    list_display = ("id",  )
     list_filter = ("investor",)
     search_fields = ("investor",)
 

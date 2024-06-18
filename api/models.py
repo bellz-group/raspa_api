@@ -106,10 +106,6 @@ class Property(models.Model):
     def my_images(self):
         return PropertyImage.objects.filter(property=self.id)
 
-
-def get_default_contract():
-    return 
-
 class PropertyListing(models.Model):
     LISTING_TYPES = [
         ('rent', 'Rent'),
@@ -128,7 +124,6 @@ class PropertyListing(models.Model):
     def __str__(self):
         return f"{self.listing_type} on {self.property}"
     
-
 class Feature(models.Model):
     """
     A representation for a group of features of a typical building 
@@ -182,7 +177,6 @@ class PropertyTour(models.Model):
         ("virtual", "virtual"),
         ("in-person", "in-person"),
     ]
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     property = models.ForeignKey(Property, on_delete=models.CASCADE, null=False, related_name="property_tours")
     tour_type = models.CharField(max_length=12, choices=TYPE, default="in-person")
@@ -218,9 +212,11 @@ class Payment(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
 #  -------- CORE --------
-
+from datetime import datetime 
 class Rental(models.Model):
     """
+    A representation of a request to t=rent a property. Would be used to 
+    keep track of the parties involved in the transaction.
 
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -232,13 +228,11 @@ class Rental(models.Model):
     amount = models.FloatField(null=False, blank=False)
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, null=True, blank=True)
 
-    duration = models.DurationField(null=False, blank=False)
+    duration = models.DurationField(default=31536000, null=False, blank=False)
     datetime = models.DateTimeField()
 
 
-    def __save__(self, *args, **kwargs):
-        self.amount = self.listing.price
-        return super().save(*args, **kwargs)
+
 
 
 class Purchase(models.Model):
