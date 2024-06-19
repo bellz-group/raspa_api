@@ -5,6 +5,7 @@ from rest_framework_simplejwt.views import (
 )
 
 from .views import *
+app_name = "account"
 
 urlpatterns = [
     path("", Index.as_view(), name="index"),

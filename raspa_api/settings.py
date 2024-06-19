@@ -27,11 +27,11 @@ SECRET_KEY = "django-insecure-a^@++moh%r_&u^n--k(1xx(oqtg%9-4k=3^iawzeh!--2a!r7b
 
 
 # Deployment Environment  --- "STAGE" | "DEV"   -----  DEBUG is True for both
-ENVT = "STAGE"
+ENVT = "DEV"
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if os.environ.get("DEBUG") == "True" else False
 
 ALLOWED_HOSTS = ["raspa-api-splu.onrender.com", "https://raspa-api.onrender.com", "raspa-api.onrender.com", "localhost"]
 
