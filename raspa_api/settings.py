@@ -10,11 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from pathlib import Path
+from datetime import timedelta
 import os
+from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()
+import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -24,7 +27,7 @@ SECRET_KEY = "django-insecure-a^@++moh%r_&u^n--k(1xx(oqtg%9-4k=3^iawzeh!--2a!r7b
 
 
 # Deployment Environment  --- "STAGE" | "DEV"   -----  DEBUG is True for both
-ENVT = "DEV"
+ENVT = "STAGE"
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -90,13 +93,19 @@ WSGI_APPLICATION = "raspa_api.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
+
+
+
+if ENVT == "DEV":
+    DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
-
+    }}
+elif ENVT == "STAGE":
+    #ENV = STAGE --- TESTING DATABASE: LIVE POSTGRESQL DATABASE ON RENDER 
+    database_url = os.environ.get("DATABASE_URL")
+    DATABASES = {'default': dj_database_url.parse(database_url)}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
