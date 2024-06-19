@@ -64,9 +64,13 @@ class PropertyListingsViewset(generics.ListCreateAPIView):
     serializer_class = PropertyListingSerializer
     filterset_class = PropertyListingFilter
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-    # filterset_fields = ("property__size", "price", "property__features__name", "property__type", "property__features__count", "listing_type")
     search_fields = ['property__name', 'property__address', 'property__description' ]
 
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return PropertyListingCreateSerializer
+        return super().get_serializer_class()
 
 class ListingDetailView(generics.RetrieveUpdateDestroyAPIView):
 

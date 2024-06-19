@@ -30,7 +30,7 @@ ENVT = "DEV"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["https://raspa-api.onrender.com", "raspa-api.onrender.com", "localhost"]
+ALLOWED_HOSTS = ["raspa-api-splu.onrender.com", "https://raspa-api.onrender.com", "raspa-api.onrender.com", "localhost"]
 
 
 # Application definition
@@ -170,8 +170,7 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
-    # 'DEFAULT_AUTHENTICATION_CLASSES': [
-    #     'rest_framework_simplejwt.authentication.JWTAuthentication',
-        
-    # ]
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
 }

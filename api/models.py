@@ -48,6 +48,17 @@ class Amenity(models.Model):
     def __str__(self):
         return f"{self.type}: {self.name}"
     
+
+# WholeLandedProperty
+# -- id - owner - manager - name - description - address - type
+# -- size - amenities - longitude - latitude - border(poly) 
+# -- is_verified - built_at - created_at - updated_at
+
+# UnitProperty | Space
+# -- id - manager - parentProperty - name - description - address(exact) - type 
+# -- size - amenities - created_at - updated_at - is_verified
+
+
 class Property(models.Model):
     """
     A representation of a real estate landed property in form of; 
@@ -62,6 +73,7 @@ class Property(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     # Management & Ownership
+    #parent = models.ForeignKey(Property, null=True, blank=True)
     manager = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name="buildings_i_listed")
     owner = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name="my_buildings")
 
@@ -75,7 +87,8 @@ class Property(models.Model):
     actions = models.CharField(max_length=3, choices=ACTIONS, default="101", null=False)
 
     # Add ons
-    amenities = models.ManyToManyField(Amenity)
+    amenities = models.ManyToManyField(Amenity, blank=True)
+    is_verified = models.BooleanField(default=False, null=True)
 
     # Features   
     ## features = models.ManyToManyField(Feature)
@@ -94,7 +107,7 @@ class Property(models.Model):
     latitude = models.DecimalField(max_digits=18, decimal_places=15, validators=[MinValueValidator(-90), MaxValueValidator(90)])
     longitude = models.DecimalField(max_digits=18, decimal_places=15, validators=[MinValueValidator(-180), MaxValueValidator(180)])
     # Timestamp
-    built_at = models.DateField()
+    built_at = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -115,7 +128,7 @@ class PropertyListing(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
-    address = models.CharField(max_length=200, null=True, blank=True) # The exact address of this listng in this property e.g apartment number
+    address = models.CharField(max_length=450, null=True, blank=True) # The exact address of this listng in this property e.g apartment number
     listing_type = models.CharField(max_length=20, choices=LISTING_TYPES)
     price = models.FloatField()
 
@@ -230,9 +243,6 @@ class Rental(models.Model):
 
     duration = models.DurationField(default=31536000, null=False, blank=False)
     datetime = models.DateTimeField()
-
-
-
 
 
 class Purchase(models.Model):

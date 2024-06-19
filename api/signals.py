@@ -17,7 +17,7 @@ def bill_for_bid(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=Rental)
-def bill_for_bid(sender, instance, created, **kwargs):
+def set_rental_attrs(sender, instance, created, **kwargs):
     '''
     Update the amount, landlord and timestamp on a rental
     

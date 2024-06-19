@@ -51,6 +51,12 @@ class PropertyDetailsSerializer(serializers.ModelSerializer):
     #     representation['features'] = FeatureSerializer(features, many=True).data
     #     return representation
 
+class PropertyListingCreateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PropertyListing
+        fields = "__all__"
+
 
 class PropertyListingSerializer(serializers.ModelSerializer):
     property = serializers.SerializerMethodField()
