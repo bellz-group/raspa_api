@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-a^@++moh%r_&u^n--k(1xx(oqtg%9-4k=3^iawzeh!--2a!r7b
 
 
 # Deployment Environment  --- "STAGE" | "DEV"   -----  DEBUG is True for both
-ENVT = "DEV"
+ENVT = "STAGE"
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
