@@ -33,7 +33,7 @@ ENVT = "STAGE"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get("DEBUG") == "True" else False
 
-ALLOWED_HOSTS = ["raspa-api-splu.onrender.com", "https://raspa-api.onrender.com", "raspa-api.onrender.com", "localhost"]
+ALLOWED_HOSTS = ["raspa-api-splu.onrender.com", "https://raspa-api-splu.onrender.com", "https://raspa-api.onrender.com", "raspa-api.onrender.com", "localhost"]
 
 
 # Application definition

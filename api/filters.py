@@ -27,4 +27,5 @@ class PropertyListingFilter(django_filters.FilterSet):
     
     class Meta:
         model = PropertyListing
-        fields = ["property__size", "price", "property__features__name", "property__type", "property__features__count", "listing_type", 'price__lte', 'price__gte', ]
+        fields = ["property__size", "price", "property__features__name", "
+                  ", "property__features__count", "listing_type", 'price__lte', 'price__gte', ]
