@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "account.apps.AccountConfig",
 
     # Third Party Apps
+    'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
@@ -60,6 +61,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
+
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -131,7 +134,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = 'Africa/Lagos'
 
 USE_I18N = True
 
@@ -162,15 +165,18 @@ AUTH_USER_MODEL = 'account.BaseUser'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-
-if ENVT == "DEV":
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-elif ENVT == "STAGE":
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
+}
 
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),   # Cookie expiry date on client
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # Cookie expiry date / 4 on client iif Remember Me is True 
+    "UPDATE_LAST_LOGIN": False
+}
+
+JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")  
 
 
 
