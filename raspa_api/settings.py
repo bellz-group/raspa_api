@@ -16,6 +16,10 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
 import dj_database_url
+
+import cloudinary
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,7 +31,7 @@ SECRET_KEY = "django-insecure-a^@++moh%r_&u^n--k(1xx(oqtg%9-4k=3^iawzeh!--2a!r7b
 
 
 # Deployment Environment  --- "STAGE" | "DEV"   -----  DEBUG is True for both
-ENVT = "DEV"
+ENVT = "STAGE"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get("DEBUG") == "True" else False
@@ -53,6 +57,8 @@ INSTALLED_APPS = [
 
     # Third Party Apps
     'corsheaders',
+    'cloudinary',
+    'cloudinary_storage',
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
@@ -162,7 +168,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = 'account.BaseUser'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 
 SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
@@ -188,3 +196,20 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
 }
+
+
+
+cloudinary.config( 
+  cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME"), 
+  api_key = os.environ.get("CLOUDINARY_API_KEY"), 
+  api_secret = os.environ.get("CLOUDINARY_API_SECRET"), 
+  secure = True
+)
+
+
+# import cloudinary.uploader
+# import cloudinary.api
+
+
+# from cloudinary import CloudinaryImage
+# from cloudinary import CloudinaryVideo

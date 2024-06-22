@@ -5,3 +5,5 @@ db.sqlite3
 */note.md
 *db.sqlite3
 *.env
+raspa_api/utils.py
+raspa_api/cloud_utils.py
