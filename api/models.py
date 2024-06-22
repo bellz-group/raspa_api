@@ -131,11 +131,18 @@ class PropertyListing(models.Model):
     address = models.CharField(max_length=450, null=True, blank=True) # The exact address of this listng in this property e.g apartment number
     listing_type = models.CharField(max_length=20, choices=LISTING_TYPES)
     price = models.FloatField()
-
     contract = models.FileField(upload_to="rental-contracts/", default="rental-contracts/default_contract.docx", blank=True)
-
+    
     def __str__(self):
-        return f"{self.listing_type} on {self.property}"
+            return f"{self.listing_type} on {self.property}"
+    
+
+    def save(self, *args, **kwargs):
+        self.address = self.addres + self.property.address
+        return super().save(self, *args, **kwargs)
+    
+
+    
     
 class Feature(models.Model):
     """

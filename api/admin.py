@@ -14,9 +14,9 @@ class PropertyAdmin(admin.ModelAdmin):
 
 @admin.register(PropertyListing)
 class PropertyListingAdmin(admin.ModelAdmin):
-    list_display = ("id", "property")
-    list_filter = ( "property",)
-    search_fields = ("property__address",)
+    list_display = ("id", "property", "listing_type")
+    list_filter = ( "property", "listing_type")
+    search_fields = ("property__address", )
 
 
 @admin.register(Amenity)
