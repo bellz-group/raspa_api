@@ -44,7 +44,6 @@ urlpatterns = [
 
 if settings.ENVT == "DEV":
     urlpatterns += static(settings.STATIC_URL)
-    urlpatterns += static(settings.STATIC_URL)
 elif settings.ENVT == "STAGE":
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
