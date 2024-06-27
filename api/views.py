@@ -120,9 +120,68 @@ class Feature(generics.RetrieveAPIView):
 
 
 
-
-
 # ---------- CORE ACTIONS ----------
+class RentalsView(generics.ListCreateAPIView):
+    queryset = Rental.objects.all()
+    serializer_class = RentalsSerializer
+    permission_classes = []
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ("status", "tenant", "landlord", "listing" )
+    lookup_field = 'pk'
+
+
+class RentalsGC_View(APIView):
+
+
+    def get(self,  request, tenant, listing, format=None):
+        '''
+        Gets or Create a Rental
+        '''
+        try:
+
+            print("Tenant: ", tenant)
+            print("Listing: ", listing)
+
+            if tenant is None or listing is None:
+                raise ValueError("Tenant or Listing not provided")
+
+        except Exception as e:
+            print("Error: invalid tenant or listing", e)
+            return Response({"error": "Invalid tenant or listing"}, status=status.HTTP_404_NOT_FOUND)
+
+
+        try:
+            tenant = BaseUserProfile.objects.get(user=tenant)
+        except BaseUserProfile.DoesNotExist:
+            return Response({"error": "Tenant not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            listing = PropertyListing.objects.get(id=listing)
+        except PropertyListing.DoesNotExist:
+            return Response({"error": "Listing not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+        rental, created = Rental.objects.get_or_create(tenant=tenant, listing=listing )
+
+        
+        print("Created: ", created)
+
+        
+    
+
+
+        serialized = RentalSerializer(rental)
+
+        return Response(serialized.data, status=status.HTTP_200_OK)
+
+
+class RentalView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Rental.objects.all()
+    serializer_class = RentalSerializer
+    permission_classes = []
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ("status", "tenant", "landlord", "listing" )
+    lookup_field = 'id'
 
 class PropertyToursView(generics.ListCreateAPIView):
     """
@@ -180,17 +239,30 @@ class BuyView(APIView):
     pass
 
 
-class PaymentView(APIView):
-
+class PaymentsView(generics.ListCreateAPIView):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
+    permission_classes = []
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ("status", "payer", "payment_provider", )
+    lookup_field = 'pk'
+
+
     
-    def get(self, request, *args, **kwargs):
 
-        return Response({})
+class PaymentView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+    permission_classes = []
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ("status", "payer", "payment_provider", )
+    lookup_field = 'pk'
 
 
 
-    
+    # def get(self, *args, **kwargs):
 
+    #     print("Gettings paying.....")
+
+    #     return 
 

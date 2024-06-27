@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, status
 from .serializers import BaseUserSerializer 
-from .models import BaseUser
+from .models import BaseUser, BaseUserProfile
 
 
 
@@ -44,41 +44,22 @@ class UserContext(APIView):
             return  Response(status=status.HTTP_401_UNAUTHORIZED)
         print(f"Is authenticated: {request.user}")
         try:
-            if request.user.is_organisation:
-                user_profile = CompanyProfile.objects.get(organisation=request.user)
-                context = {
-                "id": user_profile.id,
-                "display_name": user_profile.name,
-                "profile_picture": user_profile.brand_logo.url if user_profile.brand_logo else None,
-                "is_job_hunting": user_profile.organisation.is_job_hunting,
-                "is_student": user_profile.organisation.is_student,
-                "is_instructor": user_profile.organisation.is_instructor,
-                "is_hirer": user_profile.organisation.is_hirer,
-                "is_organisation": user_profile.organisation.is_organisation,
-                "is_wisp_operator": user_profile.organisation.is_wisp_operator,
-                "is_staff": user_profile.organisation.is_staff,
-                "is_verified": user_profile.organisation.is_verified,
-            }
-                
-                return Response(context, status=status.HTTP_200_OK)
-            else:
-                user_profile = BaseUserProfile.objects.get(user = request.user)
-                context = {
-                "id": user_profile.id,
-                "display_name": user_profile.display_name,
-                "profile_picture":user_profile.profile_picture.url if user_profile.profile_picture else None,
-                "is_job_hunting": user_profile.user.is_job_hunting,
-                "is_student": user_profile.user.is_student,
-                "is_instructor": user_profile.user.is_instructor,
-                "is_hirer": user_profile.user.is_hirer,
-                "is_organisation": user_profile.user.is_organisation,
-                "is_wisp_operator": user_profile.user.is_wisp_operator,
-                "is_staff": user_profile.user.is_staff,
-                "is_verified": user_profile.user.is_verified,
-            }
+            user_profile, _ = BaseUserProfile.objects.get_or_create(user=request.user)
+            print("Profile: ", user_profile)
+            context = {
+            "id": user_profile.id,
+            "display_name": user_profile.display_name,
+            "first_name":user_profile.user.first_name,
+            "last_name": user_profile.user.last_name,
+            "email": user_profile.user.email,
+            "username": user_profile.user.username,
+            "is_staff": user_profile.user.is_staff,
+            "is_verified": user_profile.user.is_verified,
+        }
                 
             return Response(context, status=status.HTTP_200_OK)
-        except:
+        except Exception as e:
+            print("Error getting context: ", e)
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
 

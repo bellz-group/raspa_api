@@ -59,8 +59,8 @@ class SaleAdmin(admin.ModelAdmin):
 
 @admin.register(Rental)
 class RentAdmin(admin.ModelAdmin):
-    list_display = ("id", "listing", "amount", "duration", "payment")
-    list_filter = ("tenant", "listing", 'duration')
+    list_display = ("id", "listing_id", "amount", "status", "payment")
+    list_filter = ("status", "tenant", "listing", 'duration')
     search_fields = ("tenant",)
 
 

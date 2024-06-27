@@ -3,6 +3,7 @@ from django.db import models
 import uuid
 from account.models import BaseUserProfile
 from django.core.validators import MinValueValidator, MaxValueValidator
+from datetime import timedelta
 #from django.contrib.gis.db import models
 
 
@@ -115,6 +116,11 @@ class Property(models.Model):
     def __str__(self):
         return f"{self.type}: {self.name}"
     
+    def save(self, *args, **kwargs):
+        if not self.manager: 
+            self.manager = self.owner
+        
+        return super().save(self, *args, **kwargs)
 
     def my_images(self):
         return PropertyImage.objects.filter(property=self.id)
@@ -131,6 +137,7 @@ class PropertyListing(models.Model):
     address = models.CharField(max_length=450, null=True, blank=True) # The exact address of this listng in this property e.g apartment number
     listing_type = models.CharField(max_length=20, choices=LISTING_TYPES)
     price = models.FloatField()
+    avaliability = models.BooleanField(default=False, blank=True) 
     contract = models.FileField(upload_to="rental-contracts/", default="rental-contracts/default_contract.docx", blank=True)
     
     def __str__(self):
@@ -214,42 +221,58 @@ class Booking(models.Model):
 class Payment(models.Model):
 
     STATUS = [
-        ("successfull", "successfull"),
         ("pending", "pending"),
         ("failed", "failed"),
+        ("successfull", "successfull"),
         ("denied", "denied"),
     ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-
-
-    #id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    # transaction_id = models.CharField(max_length=500)
     payer = models.ForeignKey(BaseUserProfile, on_delete=models.CASCADE, null=False, blank=False)
     amount = models.FloatField(default=1)
     status = models.CharField(max_length=12, choices=STATUS, default="pending")
-    
     payment_provider = models.CharField(max_length=100)
     date = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):  
+        return f"{self.amount}: {self.payer}"
+    
+
+
 #  -------- CORE --------
-from datetime import datetime 
+
+def get_first_user():
+    first = BaseUserProfile.objects.first()
+    return first.id
+
+
 class Rental(models.Model):
     """
     A representation of a request to t=rent a property. Would be used to 
     keep track of the parties involved in the transaction.
 
     """
+    STATUS = [
+        ("pending", "pending"),
+        ("cancelled", "cancelled"),
+        ("active", "active"),
+        ("complete", "complete"),
+
+    ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     
-    tenant = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, related_name="rented")
+    tenant = models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, related_name="rentals")
     landlord =  models.ForeignKey(BaseUserProfile, on_delete=models.SET_NULL, null=True, related_name="rented_out")
     listing = models.ForeignKey(PropertyListing, on_delete=models.CASCADE, default="f55470e2-aeed-4f5f-a329-6ddc37b83455", null=False, blank=False)
     
-    amount = models.FloatField(null=False, blank=False)
+    status = models.CharField(max_length=9, choices=STATUS, default="pending")
+    amount = models.FloatField(default=999999999.0, null=False, blank=True)
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, null=True, blank=True)
 
-    duration = models.DurationField(default=31536000, null=False, blank=False)
-    datetime = models.DateTimeField()
+    duration = models.DurationField(default=timedelta(seconds=31536000), null=False, blank=True)
+    datetime = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Rental: ({self.tenant.display_name}) : ({self.listing}) "
 
 
 class Purchase(models.Model):

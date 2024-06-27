@@ -29,6 +29,9 @@ class PropertyListingFilter(django_filters.FilterSet):
         model = PropertyListing
         fields = [
                     "price__lte","price__gte", "listing_type", 
-                    "property__features__name", "property__type", 
+                    "property__features__name", "property__type",
+                    "property__size", 
                     "property__features__count", "property__features"
                     ]
+        
+

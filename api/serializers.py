@@ -98,3 +98,26 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields =  "__all__"
+
+
+
+
+# -------------- CORE --------------
+
+
+class RentalsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rental
+        fields = "__all__"
+
+class RentalSerializer(serializers.ModelSerializer):
+    tenant = BaseUserProfileSerializer(read_only=True)
+    landlord = BaseUserProfileSerializer(read_only=True)
+    #listing = PropertyListingSerializer(read_only=True)
+
+    class Meta:
+        model = Rental
+        fields = ["id", "status", "amount", "duration", "tenant", "landlord", "listing", "payment"]
+
+
+
