@@ -48,7 +48,7 @@ class UserContext(APIView):
             print("Profile: ", user_profile)
             context = {
             "id": user_profile.id,
-            "display_name": user_profile.display_name,
+            "display_name": f"{user_profile}",
             "first_name":user_profile.user.first_name,
             "last_name": user_profile.user.last_name,
             "email": user_profile.user.email,

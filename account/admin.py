@@ -7,9 +7,9 @@ from .models import *
 
 @admin.register(BaseUser)
 class BaseUserAdmin(admin.ModelAdmin):
-    list_display = ("id", "email", "first_name", "last_name")
+    list_display = ("id", "email", "first_name", "last_name", 'username')
     list_filter = ( "is_active", "is_staff")
-    search_fields = ( "email", "first_name", "last_name")
+    search_fields = ( "email", "first_name", "last_name", 'username')
 
 
 @admin.register(BaseUserProfile)
