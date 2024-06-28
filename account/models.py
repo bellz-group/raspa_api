@@ -12,8 +12,8 @@ class BaseUser(AbstractUser):
     email = models.EmailField(unique=True, null=False, blank=False)
     
     username = models.CharField(max_length=100, null=True, blank=True)
-    first_name = models.CharField(max_length=150, blank=True)
-    last_name = models.CharField(max_length=150, blank=True)
+    first_name = models.CharField(max_length=150, null=True, blank=True)
+    last_name = models.CharField(max_length=150, null=True,  blank=True)
 
     # Verification
     is_verified = models.BooleanField(default=False)
@@ -48,10 +48,8 @@ class BaseUserProfile(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        name = f"{self.user.first_name} {self.user.last_name}"
-        # print(f"Name: {name}")
-        # print(len(name))
-        if len(name) < 2:
-            return f'{self.user}'
-        return f"{self.user.first_name} {self.user.last_name}"
-
+        if self.user.username:
+            return f"{self.user.username}"
+        if self.user.first_name:
+            return f"{self.user.first_name} {self.user.last_name}"
+        return f"{self.display_name}"

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, status
-from .serializers import BaseUserSerializer 
+from .serializers import BaseUserCreateSerializer, BaseUserSerializer 
 from .models import BaseUser, BaseUserProfile
 
 
@@ -22,7 +22,7 @@ class Index(APIView):
 class UserRegistration(generics.CreateAPIView):
 
     queryset = BaseUser.objects.all()
-    serializer_class = BaseUserSerializer
+    serializer_class = BaseUserCreateSerializer
 
     def create(self, request, *args, **kwargs):
         print(request)
