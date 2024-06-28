@@ -68,9 +68,9 @@ class BaseUserCreateSerializer(serializers.ModelSerializer):
     
     # Creates a new user object using validated data
     def create(self, validated_data):
-        username = validated_data.get('username', None)
-        first_name = validated_data.get('first_name', None)
-        last_name = validated_data.get('last_name', None)
+        username = validated_data.get('username', "")
+        first_name = validated_data.get('first_name', "")
+        last_name = validated_data.get('last_name', "")
         if not username:
             username = validated_data['email'].split("@")[0]
 
