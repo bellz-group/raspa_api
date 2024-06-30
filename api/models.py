@@ -120,7 +120,7 @@ class Property(models.Model):
         if not self.manager: 
             self.manager = self.owner
         
-        return super().save(self, *args, **kwargs)
+        super().save(*args, **kwargs)
 
     def my_images(self):
         return PropertyImage.objects.filter(property=self.id)
@@ -145,8 +145,8 @@ class PropertyListing(models.Model):
     
 
     def save(self, *args, **kwargs):
-        self.address = self.addres + self.property.address
-        return super().save(self, *args, **kwargs)
+        self.address = self.address + self.property.address
+        super().save(*args, **kwargs)
     
 
     
